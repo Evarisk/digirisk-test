@@ -1,0 +1,27 @@
+{
+  "name": "digirisk-test",
+  "version": "1.0.0",
+  "description": "NightmareJS for Digirisk",
+  "main": "index.js",
+  "scripts": {
+		"start": "node index.js",
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Evarisk/digirisk-test.git"
+  },
+  "keywords": [
+    "NightmareJS",
+    "test"
+  ],
+  "author": "Evarisk",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/Evarisk/digirisk-test/issues"
+  },
+  "homepage": "https://github.com/Evarisk/digirisk-test#readme",
+	"dependencies": {
+		"nightmare": "latest"
+	}
+}
