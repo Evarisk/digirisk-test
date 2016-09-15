@@ -2,6 +2,10 @@
  window.__nightmare = {};
 	__nightmare.ipc = require('electron').ipcRenderer;
 
+window.confirm = function(message, defaultResponse){
+  return true;
+}
+
 var open = window.XMLHttpRequest.prototype.open;
 window.__responses = [];
 window.currentAction = undefined;
@@ -11,6 +15,14 @@ window.XMLHttpRequest.prototype.open = function (method, url, async, user, pass)
 				var responseJSON = JSON.parse(this.responseText);
 				if ( responseJSON && responseJSON.data && responseJSON.data.template ) {
 					delete responseJSON.data.template;
+				}
+
+				if ( responseJSON && responseJSON.data && responseJSON.data.template_left ) {
+					delete responseJSON.data.template_left;
+				}
+
+				if ( responseJSON && responseJSON.data && responseJSON.data.template_right ) {
+					delete responseJSON.data.template_right;
 				}
 				window.__responses[window.currentAction] = responseJSON;
 			}
