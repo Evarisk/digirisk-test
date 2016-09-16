@@ -9,8 +9,9 @@ module.exports = function(cb) {
 				show: true,
 				typeInterval: 50,
 				webPreferences: {
-			    preload: path.resolve("xhr.js")
-			  }
+			    preload: path.resolve("xhr.js"),
+					partition: 'nopersist'
+				}
 			});
 
 			nightmare

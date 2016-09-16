@@ -32,6 +32,7 @@ window.XMLHttpRequest.prototype.open = function (method, url, async, user, pass)
 
 window.XMLHttpRequest.prototype.realSend = XMLHttpRequest.prototype.send;
 window.XMLHttpRequest.prototype.send = function(vData) {
+	getAction(vData);
 	this.realSend(vData);
 };
 

@@ -1,5 +1,7 @@
 var expect = require('chai').expect;
 
+var picture = require('../picture');
+
 var group_id = [];
 var unique_identifier = new Array();
 
@@ -9,6 +11,14 @@ module.exports = function(nightmare) {
 			create_group(nightmare, done);
 		});
 
+		it('Add picture to group', function(done) {
+			picture.add_picture_to_element(nightmare, 'obligationPieds_s-2', done);
+		});
+
+		it('Add picture gallery to group', function(done) {
+			picture.add_gallery_picture_to_element(nightmare, 'interdictionGenerale_s-5', done);
+		});
+
 		it('Delete group', function(done) {
 			delete_group(nightmare, done);
 		});
@@ -16,6 +26,8 @@ module.exports = function(nightmare) {
 		it('Save group', function(done) {
 			save_group(nightmare, done);
 		});
+
+
 
 		describe('Move group', function(done) {
 			it('Create new group', function(done) {
@@ -49,6 +61,10 @@ function create_group(nightmare, done) {
 			unique_identifier.push(response.data.society.unique_identifier);
 			done();
 		})
+		.catch(function(error) {
+			console.error('Search failed:', error);
+			done('Error');
+		})
 }
 
 function delete_group(nightmare, done) {
@@ -61,6 +77,10 @@ function delete_group(nightmare, done) {
 		.then(function(response) {
 			expect(response.success).to.equal(true);
 			done();
+		})
+		.catch(function(error) {
+			console.error('Search failed:', error);
+			done('Error');
 		})
 }
 
@@ -79,17 +99,28 @@ function save_group(nightmare, done) {
 			expect(response.success).to.equal(true);
 			done();
 		})
+		.catch(function(error) {
+			console.error('Search failed:', error);
+			done('Error');
+		})
 }
 
 function move_group(nightmare, done) {
 	nightmare
 		.type('.wp-digi-global-sheet-header label.wp-list-search input', unique_identifier[1])
 		.wait(5000)
+		.click('.ui-autocomplete li')
+		.click('.wp-digi-group-action-container button')
+		.wait(5000)
 		.evaluate(function() {
 			return window.__responses[window.currentAction];
 		})
-		.then(function() {
-			console.log(unique_identifier);
+		.then(function(response) {
+			expect(response.success).to.equal(true);
 			done();
+		})
+		.catch(function(error) {
+			console.error('Search failed:', error);
+			done('Error');
 		})
 }
