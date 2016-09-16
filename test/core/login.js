@@ -30,6 +30,11 @@ module.exports = function(cb) {
 					done();
 					cb(nightmare);
 				})
+				.catch(function(error) {
+					console.error('Search failed:', error);
+					done('Error');
+					cb(nightmare);
+				})
 		});
 	});
 };

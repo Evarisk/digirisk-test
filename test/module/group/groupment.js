@@ -16,7 +16,8 @@ module.exports = function(nightmare) {
 		});
 
 		it('Add picture gallery to group', function(done) {
-			picture.add_gallery_picture_to_element(nightmare, 'interdictionGenerale_s-5', done);
+			console.log(group_id);
+			picture.add_gallery_picture_to_element(nightmare, group_id[group_id.length - 1], 'interdictionGenerale_s-5', done);
 		});
 
 		it('Delete group', function(done) {
@@ -59,6 +60,7 @@ function create_group(nightmare, done) {
 			expect(response.data.society.id).to.be.at.least(1);
 			expect(response.success).to.equal(true);
 			unique_identifier.push(response.data.society.unique_identifier);
+			group_id.push(response.data.society.id);
 			done();
 		})
 		.catch(function(error) {
