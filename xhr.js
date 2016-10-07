@@ -7,24 +7,31 @@ window.confirm = function(message, defaultResponse){
 }
 
 var open = window.XMLHttpRequest.prototype.open;
-window.__responses = [];
+window.currentResponse = undefined;
 window.currentAction = undefined;
 window.XMLHttpRequest.prototype.open = function (method, url, async, user, pass) {
 		this.addEventListener("readystatechange", function() {
 			if (this.readyState === 4) {
-				var responseJSON = JSON.parse(this.responseText);
-				if ( responseJSON && responseJSON.data && responseJSON.data.template ) {
-					delete responseJSON.data.template;
+				var responseJSON = { 'success': false };
+				try {
+					var responseJSON = JSON.parse(this.responseText);
+					if ( responseJSON && responseJSON.data && responseJSON.data.template ) {
+						delete responseJSON.data.template;
+					}
+
+					if ( responseJSON && responseJSON.data && responseJSON.data.template_left ) {
+						delete responseJSON.data.template_left;
+					}
+
+					if ( responseJSON && responseJSON.data && responseJSON.data.template_right ) {
+						delete responseJSON.data.template_right;
+					}
+				}
+				catch(e) {
+
 				}
 
-				if ( responseJSON && responseJSON.data && responseJSON.data.template_left ) {
-					delete responseJSON.data.template_left;
-				}
-
-				if ( responseJSON && responseJSON.data && responseJSON.data.template_right ) {
-					delete responseJSON.data.template_right;
-				}
-				window.__responses[window.currentAction] = responseJSON;
+				window.currentResponse = responseJSON;
 			}
 		}, false);
 	open.apply(this, arguments);
