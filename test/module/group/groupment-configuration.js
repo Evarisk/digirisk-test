@@ -83,7 +83,6 @@ function write_data_group_configuration(nightmare, done) {
 		expect(response.data.group.contact.phone[0]).to.contain('06 67 16 16 16');
 		expect(response.data.group.id).to.be.at.least(1);
 		expect(response.data.address.id).to.be.at.least(1);
-		expect(response.success).to.equal(true);
 		done();
 	})
 	.catch(function(error) {
