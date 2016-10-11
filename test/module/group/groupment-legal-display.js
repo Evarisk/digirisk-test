@@ -157,15 +157,15 @@ function write_data_legal_display(nightmare, done) {
 		expect(response.data.legal_display.detective_work[0].address[0].address).to.contain('Adresse detective');
 		expect(response.data.legal_display.detective_work[0].address[0].postcode).to.contain('34280');
 		expect(response.data.legal_display.detective_work[0].address[0].town).to.contain('Village detective');
-		expect(response.data.legal_display.detective_work[0].address[0].phone).to.contain('04 67 16 16 16');
+		expect(response.data.legal_display.detective_work[0].contact.phone).to.contain('04 67 16 16 16');
 		expect(response.data.legal_display.detective_work[0].opening_time).to.contain('10h 12h 14h 18h');
 
 		expect(response.data.legal_display.occupational_health_service[0].full_name).to.contain('Nom occupant');
 		expect(response.data.legal_display.occupational_health_service[0].address[0].address).to.contain('Adresse occupant');
 		expect(response.data.legal_display.occupational_health_service[0].address[0].postcode).to.contain('34130');
 		expect(response.data.legal_display.occupational_health_service[0].address[0].town).to.contain('Village occupant');
-		expect(response.data.legal_display.occupational_health_service[0].address[0].phone).to.contain('04 67 16 29 29');
-		expect(response.data.legal_display.occupational_health_service[0].opening_time).to.contain('10h 12h 14h 18h');
+		expect(response.data.legal_display.occupational_health_service[0].contact.phone).to.contain('04 67 16 29 29');
+		expect(response.data.legal_display.occupational_health_service[0].opening_time).to.contain('9h 12h 14h 18h');
 
 		expect(response.data.legal_display.emergency_service.emergency).to.contain('20');
 		expect(response.data.legal_display.emergency_service.poison_control_center).to.contain('22');
@@ -198,8 +198,8 @@ function write_data_legal_display(nightmare, done) {
 		expect(response.data.legal_display.derogation_schedule.permanent).to.contain('Permanent !');
 
 
-		expect(response.data.legal_display.collective_agreement.location_and_access_terms_of_the_agreement).to.contain('ouais');
-		expect(response.data.legal_display.collective_agreement.title_of_the_applicable_collective_agreement).to.contain('non');
+		expect(response.data.legal_display.collective_agreement.location_and_access_terms_of_the_agreement).to.contain('non');
+		expect(response.data.legal_display.collective_agreement.title_of_the_applicable_collective_agreement).to.contain('ouais');
 
 		expect(response.data.legal_display.rules.location).to.contain('location');
 
