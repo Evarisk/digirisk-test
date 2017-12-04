@@ -1,19 +1,9 @@
 var expect = require('chai').expect;
 var Nightmare = require('nightmare');
-var path = require('path');
 
-module.exports = function(cb) {
+module.exports = function(nightmare, cb) {
 	describe('Login', function() {
 		it('It shoud login & go to digirisk main page', function(done) {
-			var nightmare = Nightmare({
-				show: true,
-				typeInterval: 1,
-				webPreferences: {
-			    preload: path.resolve("xhr.js"),
-					partition: 'nopersist'
-				}
-			});
-
 			nightmare
 				.goto('http://127.0.0.1/wordpress/wp-admin')
 				.wait('#login')
@@ -22,7 +12,7 @@ module.exports = function(cb) {
 				.click('input[type="submit"]')
 				.wait('#adminmenu')
 				.goto('http://127.0.0.1/wordpress/wp-admin/admin.php?page=digirisk-simple-risk-evaluation')
-				.wait('.wp-digi-societytree-main-container')
+				.wait('.digirisk-wrap')
 				.evaluate(function() {
 					return;
 				})
@@ -32,7 +22,7 @@ module.exports = function(cb) {
 				})
 				.catch(function(error) {
 					console.error('Search failed:', error);
-					done('Error');
+					done(error);
 					cb(nightmare);
 				})
 		});

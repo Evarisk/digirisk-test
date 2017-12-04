@@ -4,8 +4,8 @@
   "description": "NightmareJS for Digirisk",
   "main": "index.js",
   "scripts": {
-		"start": "SET DEBUG=nightmare & node index.js",
-    "test": "node_modules/.bin/mocha -w"
+    "start": "SET DEBUG=nightmare & node index.js",
+    "test": "set DEBUG=nightmare && mocha -w"
   },
   "repository": {
     "type": "git",
@@ -21,12 +21,12 @@
     "url": "https://github.com/Evarisk/digirisk-test/issues"
   },
   "homepage": "https://github.com/Evarisk/digirisk-test#readme",
-	"dependencies": {
-		"nightmare": "latest",
-		"chai": "3.5.0"
-	},
-	"devDependencies": {
-		"mocha": "*",
-		"should": ">= 0.0.1"
-	}
+  "dependencies": {
+    "chai": "3.5.0",
+    "nightmare": "^2.10.0"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "should": ">= 0.0.1"
+  }
 }
