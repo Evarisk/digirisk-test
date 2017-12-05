@@ -2,8 +2,8 @@ var Nightmare = require('nightmare');
 var path = require('path');
 
 var nightmare = Nightmare({
-	show: true,
-	typeInterval: 25,
+	show: false,
+	typeInterval: 1,
 	width: 1000,
 	height: 900,
 	waitTimeout: 15000,
@@ -15,15 +15,9 @@ var nightmare = Nightmare({
 });
 
 require('./core/login')(nightmare, function() {
-	// require('./module/navigation')(nightmare, function() {
+	require('./module/navigation')(nightmare, function() {
 		require('./module/society/society')(nightmare, function() {
 			nightmare.end();
-		// require('./module/group/groupment-configuration')(nightmare, function() {
-		// 	require('./module/group/groupment-legal-display')(nightmare, function() {
-		// 		require('./module/group/duer')(nightmare, function() {
-		// 		});
-		// 	});
 		});
-	// });
-	// });
+	});
 });

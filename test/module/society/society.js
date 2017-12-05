@@ -11,21 +11,21 @@ module.exports = function(nightmare, cb) {
 			open_society(nightmare, done);
 		});
 
-		// it('Go to tab information', function(done) {
-		// 	tab.goToInformations(nightmare, done);
-		// });
-    //
-		// it('Society: Form information', function(done) {
-		// 	form_information(nightmare, done);
-		// });
-    //
-		// it('Go to tab registre at bénins', function(done) {
-		// 	tab.goToRegistreATBenins(nightmare, done);
-		// });
-    //
-		// it('Society: Registre AT Benin (no-data)', function(done) {
-		// 	generate_registre_at_benin(nightmare, done);
-		// });
+		it('Go to tab information', function(done) {
+			tab.goToInformations(nightmare, done);
+		});
+
+		it('Society: Form information', function(done) {
+			form_information(nightmare, done);
+		});
+
+		it('Go to tab registre at bénins', function(done) {
+			tab.goToRegistreATBenins(nightmare, done);
+		});
+
+		it('Society: Registre AT Benin (no-data)', function(done) {
+			generate_registre_at_benin(nightmare, done);
+		});
 
 		it('Go to tab légla display', function(done) {
 			tab.goToLegalDisplay(nightmare, done);
@@ -243,15 +243,16 @@ function generate_legal_display(nightmare, done) {
 			var response = window.currentResponse;
 			delete window.currentResponse;
 
+
+			var success = true;
+			var errors = [];
+
 			for( var key in window.societyInformationsData ) {
 				if ( window.societyInformationsData[key] !== document.querySelector( '.main-content .form input[name="' + key + '"]' ).value ) {
 					errors.push( key + '.value "' + window.societyInformationsData[key] + '" est différent de ' + document.querySelector( '.main-content .form input[name="' + key + '"]' ).value );
 					success = false;
 				}
 			}
-
-			var success = true;
-			var errors = [];
 
 			if ( response.errors ) {
 				response.success = false;
