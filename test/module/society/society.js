@@ -68,6 +68,7 @@ function open_society(nightmare, done) {
 		})
 		.catch((error) => {
 			console.error( 'Open Society', error );
+			done(false);
 		})
 }
 
@@ -190,9 +191,7 @@ function form_information(nightmare, done) {
 
 			done();
 		})
-		.catch((error) => {
-			console.error( 'Form information', error );
-		})
+		.then(done, done)
 }
 
 function generate_registre_at_benin(nightmare, done) {
@@ -262,9 +261,7 @@ function generate_legal_display(nightmare, done) {
 			return response;
 		})
 		.then(function(response) {
-			console.log(response);
 			expect(response.success).to.equal(true);
-			// expect(response.data.result.success).to.equal(true);
 			expect(response.data.callback_success).to.equal('generatedSuccess');
 
 			done();
