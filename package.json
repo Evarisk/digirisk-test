@@ -23,6 +23,7 @@
   "homepage": "https://github.com/Evarisk/digirisk-test#readme",
   "dependencies": {
     "chai": "3.5.0",
+    "chai-as-promised": "^7.1.1",
     "nightmare": "^2.10.0"
   },
   "devDependencies": {

@@ -1,29 +1,45 @@
 var expect = require('chai').expect;
 
-var go_to = function (nightmare, tab, done) {
-	describe('Navigation Tab', function() {
-		it('Load TAB ' + tab, function(done) {
-			go_to_func(nightmare, tab, done);
-			cb(nightmare);
-		});
-	});
+var exportGoToInformations = function (nightmare, done) {
+	goToInformations(nightmare, done);
 }
 
-function go_to_func( nightmare, tab, done ) {
+var exportGoToRegistreATBenins = function (nightmare, done) {
+	goToRegistreATBenins(nightmare, done);
+}
+
+var exportGoToLegalDisplay = function (nightmare, done) {
+	goToLegalDisplay(nightmare, done);
+}
+
+function goToInformations( nightmare, done ) {
 	nightmare
-		.click( '.main-container .tab-element[data-action="' + tab.slug + '"]' )
+		.click( '.main-container .tab-element[data-action="digi-informations"]' )
+		.wait(function() {
+			if (window.currentResponse) {
+				return true;
+			}
+		})
 		.evaluate(function() {
 			var response = window.currentResponse;
 			delete window.currentResponse;
 			var title = document.querySelector( '.main-content h1' );
 
-			if ( tab.text === title.innerHTML ) {
+			if ( 'Informations Evarisk' === title.innerHTML ) {
 				return response;
 			}
 
 			return false;
 		})
-		.then(function(response) {
+		.then(function(result) {
+			var response = {};
+
+			if ( ! result ) {
+				response.success = result;
+			} else {
+				response = result;
+			}
+
 			expect(response.success).to.equal(true);
 
 			done();
@@ -33,4 +49,80 @@ function go_to_func( nightmare, tab, done ) {
 		})
 }
 
-module.exports = go_to;
+function goToRegistreATBenins( nightmare, done ) {
+	nightmare
+		.click( '.main-container .tab-element[data-action="digi-registre-accident"]' )
+		.wait(function() {
+			if (window.currentResponse) {
+				return true;
+			}
+		})
+		.evaluate(function() {
+			var response = window.currentResponse;
+			delete window.currentResponse;
+			var title = document.querySelector( '.main-content h1' );
+
+			if ( 'Les registres des AT bénins Evarisk' === title.innerHTML ) {
+				return response;
+			}
+
+			return false;
+		})
+		.then(function(result) {
+			var response = {};
+
+			if ( ! result ) {
+				response.success = result;
+			} else {
+				response = result;
+			}
+
+			expect(response.success).to.equal(true);
+
+			done();
+		})
+		.catch((error) => {
+			console.error( 'Load TAB REGISTRE AT BENINS:', error );
+		})
+}
+
+function goToLegalDisplay( nightmare, done ) {
+	nightmare
+		.click( '.main-container .tab-element[data-action="digi-legal_display"]' )
+		.wait(function() {
+			if (window.currentResponse) {
+				return true;
+			}
+		})
+		.evaluate(function() {
+			var response = window.currentResponse;
+			delete window.currentResponse;
+			var title = document.querySelector( '.main-content h1' );
+
+			if ( 'Les affichages légales Evarisk' === title.innerHTML ) {
+				return response;
+			}
+
+			return false;
+		})
+		.then(function(result) {
+			var response = {};
+
+			if ( ! result ) {
+				response.success = result;
+			} else {
+				response = result;
+			}
+
+			expect(response.success).to.equal(true);
+
+			done();
+		})
+		.catch((error) => {
+			console.error( 'Load TAB LEGAL DISPLAY:', error );
+		})
+}
+
+module.exports.goToInformations     = exportGoToInformations;
+module.exports.goToRegistreATBenins = exportGoToRegistreATBenins;
+module.exports.goToLegalDisplay     = exportGoToLegalDisplay;

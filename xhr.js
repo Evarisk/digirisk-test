@@ -6,9 +6,15 @@ window.confirm = function(message, defaultResponse){
   return true;
 }
 
+var fs = require("fs");
+
+window.societyInformationsData = fs.readFileSync("./test/module/society/society_informations.json");
+window.societyInformationsData = JSON.parse(window.societyInformationsData);
+
 var open = window.XMLHttpRequest.prototype.open;
 window.currentResponse = undefined;
 window.currentAction = undefined;
+window.digiriskTest = {};
 window.XMLHttpRequest.prototype.open = function (method, url, async, user, pass) {
 		this.addEventListener("readystatechange", function() {
 			if (this.readyState === 4) {
