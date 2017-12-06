@@ -2,22 +2,28 @@ var Nightmare = require('nightmare');
 var path = require('path');
 
 var nightmare = Nightmare({
-	show: false,
-	typeInterval: 1,
+	show: true,
+	typeInterval: 10,
 	width: 1000,
 	height: 900,
-	waitTimeout: 15000,
-	executionTimeout: 15000,
-	gotoTimeout: 15000,
+	waitTimeout: 100 * 1000,
 	webPreferences: {
 		preload: path.resolve("xhr.js")
 	}
 });
 
-require('./core/login')(nightmare, function() {
-	require('./module/navigation')(nightmare, function() {
-		require('./module/society/society')(nightmare, function() {
-			nightmare.end();
-		});
-	});
+var login = require('./core/login');
+
+login.goToLogin(nightmare, function() {
+	// require('./module/user/user')(nightmare, function() {
+		login.goToApp(nightmare, function() {
+			require('./module/navigation').navigation(nightmare, function() {
+				require('./module/society/society')(nightmare, function() {
+					require('./module/establishment/establishment')(nightmare, function() {
+					// nightmare.end();
+					});
+				});
+			});
+		})
+	// });
 });

@@ -2,8 +2,17 @@ var expect = require('chai').expect;
 var fs = require("fs");
 var tab = require('./../tab');
 
-var societyInformationsData = fs.readFileSync("./test/module/society/society_informations.json");
+var societyInformationsData = fs.readFileSync("./test/module/society/data/society_informations.json");
 var societyInformationsData = JSON.parse(societyInformationsData);
+
+var societyLegalDisplayData = fs.readFileSync("./test/module/society/data/society_legal_display.json");
+var societyLegalDisplayData = JSON.parse(societyLegalDisplayData);
+
+var societyDiffusionInformationsData = fs.readFileSync("./test/module/society/data/society_diffusion_informations.json");
+var societyDiffusionInformationsData = JSON.parse(societyDiffusionInformationsData);
+
+var duerDATA = fs.readFileSync("./test/module/society/data/duer_data.json");
+var duerDATA = JSON.parse(duerDATA);
 
 module.exports = function(nightmare, cb) {
 	describe('Societé', function() {
@@ -27,12 +36,28 @@ module.exports = function(nightmare, cb) {
 			generate_registre_at_benin(nightmare, done);
 		});
 
-		it('Go to tab légla display', function(done) {
+		it('Go to tab Légal display', function(done) {
 			tab.goToLegalDisplay(nightmare, done);
 		});
 
 		it('Society: Legal display', function(done) {
 			generate_legal_display(nightmare, done);
+		});
+
+		it('Go to tab Diffusion informations', function(done) {
+			tab.goToDiffusionInformations(nightmare, done);
+		});
+
+		it('Society: Diffusion informations', function(done) {
+			generate_diffusion_informations(nightmare, done);
+		});
+
+		it('Go to tab DUER', function(done) {
+			tab.goToDUER(nightmare, done);
+		});
+
+		it('Society: DUER', function(done) {
+			generate_DUER(nightmare, done);
 			cb(nightmare);
 		});
 	});
@@ -42,13 +67,13 @@ function open_society(nightmare, done) {
 	nightmare
 		.click( '.navigation-container .society-header' )
 		.wait(function() {
-			if (window.currentResponse) {
+			if (window.currentResponse['loadedSocietySuccess']) {
 				return true;
 			}
 		})
 		.evaluate(function() {
-			var response = window.currentResponse;
-			delete window.currentResponse;
+			var response = window.currentResponse['loadedSocietySuccess'];
+			delete window.currentResponse['loadedSocietySuccess'];
 			var title = document.querySelector( '.main-header .title input[name="title"]' );
 			if ( 'Evarisk' == title.value ) {
 				return response;
@@ -62,123 +87,45 @@ function open_society(nightmare, done) {
 			} else {
 				expect(response.data.callback_success).to.equal( 'loadedSocietySuccess' );
 				expect(response.success).to.equal(true);
-
-				done();
 			}
 		})
-		.catch((error) => {
-			console.error( 'Open Society', error );
-			done(false);
-		})
+		.then(done, done);
 }
 
 function form_information(nightmare, done) {
-	nightmare
-		.type( '.society-informations input[name="society[title]"]', '' )
-		.type( '.society-informations input[name="society[siret_id]"]', '' )
-		.type( '.society-informations input[name="society[number_of_employees]"]', '' )
-		.type( '.society-informations input[name="address[address]"]', '' )
-		.type( '.society-informations input[name="address[additional_address]"]', '' )
-		.type( '.society-informations input[name="society[date]"]', '' )
-		.type( '.society-informations input[name="address[postcode]"]', '' )
-		.type( '.society-informations input[name="address[town]"]', '' )
-		.type( '.society-informations input[name="society[contact][phone][]"]', '' )
-		.type( '.society-informations input[name="society[contact][email]"]', '' )
-		.type( '.society-informations textarea[name="society[content]"]', '' )
+	for( var key in societyInformationsData ) {
+		nightmare.type( '.society-informations *[name="' + key + '"]', '' );
+		nightmare.type( '.society-informations *[name="' + key + '"]', societyInformationsData[key] );
+	}
 
-		.type( '.society-informations input[name="society[title]"]', 'Evarisk' )
-		.type( '.society-informations input[name="society[siret_id]"]', '123456789' )
-		.type( '.society-informations input[name="society[number_of_employees]"]', '10' )
-		.type( '.society-informations input[name="address[address]"]', 'Ma superbe adresse' )
-		.type( '.society-informations input[name="address[additional_address]"]', 'Mon complément dadresse' )
-		.type( '.society-informations input[name="society[date]"]', '2017-12-04 12:00:00' )
-		.type( '.society-informations input[name="address[postcode]"]', '12345' )
-		.type( '.society-informations input[name="address[town]"]', 'Ma ville' )
-		.type( '.society-informations input[name="society[contact][phone][]"]', '0467676767' )
-		.type( '.society-informations input[name="society[contact][email]"]', 'email@demo.com' )
-		.type( '.society-informations textarea[name="society[content]"]', 'Ma superbe entreprise' )
+	nightmare
 		.wait(1000)
 
 		.click( '.society-informations .action-input' )
 		.wait(function() {
-			if (window.currentResponse) {
+			if (window.currentResponse['savedSocietyConfiguration']) {
 				return true;
 			}
 		})
 		.evaluate(function() {
-			var response = window.currentResponse;
-			delete window.currentResponse;
+			var response = window.currentResponse['savedSocietyConfiguration'];
+			delete window.currentResponse['savedSocietyConfiguration'];
 
 			var success = true;
 			var errors = [];
 
-			var title               = document.querySelector( '.main-header .title input[name="title"]' );
-			var siret_id            = document.querySelector( '.society-informations input[name="society[siret_id]"]' );
-			var number_of_employees = document.querySelector( '.society-informations input[name="society[number_of_employees]"]' );
-			var address             = document.querySelector( '.society-informations input[name="address[address]"]' );
-			var additional_address  = document.querySelector( '.society-informations input[name="address[additional_address]"]' );
-			var postcode            = document.querySelector( '.society-informations input[name="address[postcode]"]' );
-			var town                = document.querySelector( '.society-informations input[name="address[town]"]' );
-			var phone               = document.querySelector( '.society-informations input[name="society[contact][phone][]"]' );
-			var email               = document.querySelector( '.society-informations input[name="society[contact][email]"]' );
-			var content             = document.querySelector( '.society-informations textarea[name="society[content]"]' );
-
-			if ( 'Evarisk' != title.value ) {
-				errors.push( 'title.value "Evarisk" est différent de ' + title.value );
-				success = false;
+			for( var key in window.societyInformationsData ) {
+				if ( window.societyInformationsData[key] !== document.querySelector( '.society-informations *[name="' + key + '"]' ).value ) {
+					errors.push( key + '.value "' + window.societyInformationsData[key] + '" est différent de ' + document.querySelector( '.society-informations *[name="' + key + '"]' ).value );
+					success = false;
+				}
 			}
 
-			if ( '123456789' != siret_id.value ) {
-				errors.push( 'siret_id.value "123456789" est différent de ' + siret_id.value );
-				success = false;
-			}
-
-			if ( '10' != number_of_employees.value ) {
-				errors.push( 'number_of_employees.value "10" est différent de ' + number_of_employees.value );
-				success = false;
-			}
-
-			if ( 'Ma superbe adresse' != address.value ) {
-				errors.push( 'address.value "Ma superbe adresse" est différent de ' + address.value );
-				success = false;
-			}
-
-			if ( 'Mon complément dadresse' != additional_address.value ) {
-				errors.push( 'additional_address.value "Mon complément dadresse" est différent de ' + additional_address.value );
-				success = false;
-			}
-
-			if ( '12345' != postcode.value ) {
-				errors.push( 'postcode.value "12345" est différent de ' + postcode.value );
-				success = false;
-			}
-
-			if ( 'Ma ville' != town.value ) {
-				errors.push( 'town.value "Ma ville" est différent de ' + town.value );
-				success = false;
-			}
-
-			if ( '0467676767' != phone.value ) {
-				errors.push( 'phone.value "0467676767" est différent de ' + phone.value );
-				success = false;
-			}
-
-			if ( 'email@demo.com' != email.value ) {
-				errors.push( 'email.value "email@demo.com" est différent de ' + email.value );
-				success = false;
-			}
-
-			if ( 'Ma superbe entreprise' != content.value ) {
-				errors.push( 'content.value "Ma superbe entreprise" est différent de ' + content.value );
-				success = false;
-			}
-
-			if ( success ) {
-				return response;
-			}
-
-			response.success = false;
 			response.data.errors = errors;
+
+			if ( response.data.errors.length ) {
+				response.success = false;
+			}
 
 			return response;
 		})
@@ -188,8 +135,6 @@ function form_information(nightmare, done) {
 			if ( response.success ) {
 				expect(response.data.callback_success).to.equal('savedSocietyConfiguration');
 			}
-
-			done();
 		})
 		.then(done, done)
 }
@@ -198,13 +143,13 @@ function generate_registre_at_benin(nightmare, done) {
 	nightmare
 		.click( '.document-accident-benins .action-input' )
 		.wait(function() {
-			if (window.currentResponse) {
+			if (window.currentResponse['generatedRegistreAccidentBenin']) {
 				return true;
 			}
 		})
 		.evaluate(function() {
-			var response = window.currentResponse;
-			delete window.currentResponse;
+			var response = window.currentResponse['generatedRegistreAccidentBenin'];
+			delete window.currentResponse['generatedRegistreAccidentBenin'];
 
 			if ( ! document.body.contains( document.querySelector( '.document-accident-benins tr[data-id="' + response.data.result.creation_response.id + '"]' ) ) ) {
 				response.success = false;
@@ -217,43 +162,124 @@ function generate_registre_at_benin(nightmare, done) {
 			expect(response.data.result.success).to.equal(true);
 			expect(response.data.callback_success).to.equal('generatedRegistreAccidentBenin');
 
-			done();
 		})
-		.catch((error) => {
-			console.error( 'Registre AT Benins', error );
-		})
+		.then(done, done);
 }
 
 function generate_legal_display(nightmare, done) {
-	for( var key in societyInformationsData ) {
+	for( var key in societyLegalDisplayData ) {
 		nightmare.type( '.main-content .form input[name="' + key + '"]', '' );
-		nightmare.type( '.main-content .form input[name="' + key + '"]', societyInformationsData[key] );
+		nightmare.type( '.main-content .form input[name="' + key + '"]', societyLegalDisplayData[key] );
 	}
 
 	nightmare
 		.wait(1000)
 		.click( '.main-content .form .action-input' )
 		.wait(function() {
-			if (window.currentResponse) {
+			if (window.currentResponse['generatedSuccess']) {
 				return true;
 			}
 		})
 		.evaluate(function() {
-			var response = window.currentResponse;
-			delete window.currentResponse;
+			var response = window.currentResponse['generatedSuccess'];
+			delete window.currentResponse['generatedSuccess'];
 
 
 			var success = true;
 			var errors = [];
 
-			for( var key in window.societyInformationsData ) {
-				if ( window.societyInformationsData[key] !== document.querySelector( '.main-content .form input[name="' + key + '"]' ).value ) {
-					errors.push( key + '.value "' + window.societyInformationsData[key] + '" est différent de ' + document.querySelector( '.main-content .form input[name="' + key + '"]' ).value );
+			for( var key in window.societyLegalDisplayData ) {
+				if ( window.societyLegalDisplayData[key] !== document.querySelector( '.main-content .form input[name="' + key + '"]' ).value ) {
+					errors.push( key + '.value "' + window.societyLegalDisplayData[key] + '" est différent de ' + document.querySelector( '.main-content .form input[name="' + key + '"]' ).value );
 					success = false;
 				}
 			}
 
-			if ( response.errors ) {
+			response.data.errors = errors;
+
+			if ( response.data.errors.length ) {
+				response.success = false;
+			}
+
+			return response;
+		})
+		.then(function(response) {
+			expect(response.success).to.equal(true);
+			expect(response.data.callback_success).to.equal('generatedSuccess');
+		})
+		.then(done, done)
+}
+
+function generate_diffusion_informations(nightmare, done) {
+	for( var key in societyDiffusionInformationsData ) {
+		nightmare.type( '.main-content .form-generate *[name="' + key + '"]', '' );
+		nightmare.type( '.main-content .form-generate *[name="' + key + '"]', societyDiffusionInformationsData[key] );
+	}
+
+	nightmare
+		.wait(1000)
+		.click( '.main-content .form-generate .action-input' )
+		.wait(function() {
+			if (window.currentResponse['generatedDiffusionInformationSuccess']) {
+				return true;
+			}
+		})
+		.evaluate(function() {
+			var response = window.currentResponse['generatedDiffusionInformationSuccess'];
+			delete window.currentResponse['generatedDiffusionInformationSuccess'];
+
+
+			var success = true;
+			var errors = [];
+
+			for( var key in window.societyDiffusionInformationsData ) {
+				if ( window.societyDiffusionInformationsData[key] !== document.querySelector( '.main-content .form-generate *[name="' + key + '"]' ).value ) {
+					errors.push( key + '.value "' + window.societyDiffusionInformationsData[key] + '" est différent de ' + document.querySelector( '.main-content .form *[name="' + key + '"]' ).value );
+					success = false;
+				}
+			}
+
+			response.data.errors = errors;
+
+			if ( response.data.errors.length ) {
+				response.success = false;
+			}
+
+			return response;
+		})
+		.then(function(response) {
+			expect(response.success).to.equal(true);
+			expect(response.data.callback_success).to.equal('generatedDiffusionInformationSuccess');
+		})
+		.then(done, done)
+}
+
+function generate_DUER(nightmare, done) {
+	for( var key in duerDATA ) {
+		nightmare.click( '.main-content tfoot .open-popup[data-src="' + key  + '"]' );
+		nightmare.wait( '.main-content .popup.active .button.green[data-target="' + key +'"]' );
+		nightmare.type( '.main-content .popup.active textarea', '' );
+		nightmare.type( '.main-content .popup.active textarea', duerDATA[key] );
+		nightmare.click( '.main-content .popup.active .button.green[data-target="' + key +'"]' );
+	}
+
+	nightmare
+		.wait(10000)
+		.click( '.main-content .open-popup[data-cb-func="popup_for_generate_DUER"]' )
+		.wait('.popup.active.duer:not(.no-close)')
+		.wait(function() {
+			if (window.currentResponse['generatedDUERSuccess']) {
+				return true;
+			}
+		})
+		.evaluate(function() {
+			var response = window.currentResponse['generatedDUERSuccess'];
+			delete window.currentResponse['generatedDUERSuccess'];
+
+			var success = true;
+			var errors = [];
+
+			if ( response.errors.length ) {
 				response.success = false;
 			}
 			response.data.errors = errors;
@@ -262,11 +288,7 @@ function generate_legal_display(nightmare, done) {
 		})
 		.then(function(response) {
 			expect(response.success).to.equal(true);
-			expect(response.data.callback_success).to.equal('generatedSuccess');
-
-			done();
+			expect(response.data.callback_success).to.equal('generatedDUERSuccess');
 		})
-		.catch((error) => {
-			console.error( 'Affichage légal', error );
-		})
+		.then(done, done)
 }

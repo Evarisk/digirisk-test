@@ -8,11 +8,27 @@ window.confirm = function(message, defaultResponse){
 
 var fs = require("fs");
 
-window.societyInformationsData = fs.readFileSync("./test/module/society/society_informations.json");
+window.societyInformationsData = fs.readFileSync("./test/module/society/data/society_informations.json");
 window.societyInformationsData = JSON.parse(window.societyInformationsData);
 
+window.societyLegalDisplayData = fs.readFileSync("./test/module/society/data/society_legal_display.json");
+window.societyLegalDisplayData = JSON.parse(window.societyLegalDisplayData);
+
+window.establishmentData = fs.readFileSync("./test/module/establishment/data/establishment.json");
+window.establishmentData = JSON.parse(window.establishmentData);
+
+window.riskData = fs.readFileSync("./test/module/establishment/data/risk.json");
+window.riskData = JSON.parse(window.riskData);
+
+window.evaluatorData = fs.readFileSync("./test/module/establishment/data/evaluator.json");
+window.evaluatorData = JSON.parse(window.evaluatorData);
+
+window.userData = fs.readFileSync("./test/module/user/data/user.json");
+window.userData = JSON.parse(window.userData);
+window.allUsersResponses = [];
+
 var open = window.XMLHttpRequest.prototype.open;
-window.currentResponse = undefined;
+window.currentResponse = [];
 window.currentAction = undefined;
 window.digiriskTest = {};
 window.XMLHttpRequest.prototype.open = function (method, url, async, user, pass) {
@@ -37,7 +53,7 @@ window.XMLHttpRequest.prototype.open = function (method, url, async, user, pass)
 
 				}
 
-				window.currentResponse = responseJSON;
+				window.currentResponse[responseJSON.data.callback_success] = responseJSON;
 			}
 		}, false);
 	open.apply(this, arguments);
@@ -45,15 +61,5 @@ window.XMLHttpRequest.prototype.open = function (method, url, async, user, pass)
 
 window.XMLHttpRequest.prototype.realSend = XMLHttpRequest.prototype.send;
 window.XMLHttpRequest.prototype.send = function(vData) {
-	getAction(vData);
 	this.realSend(vData);
 };
-
-function getAction(data) {
-	var post = data.split('&');
-	var action = post[0].split('=');
-
-	if ( action && action[0] && action[0] === 'action' && action[1] && action[1] != "heartbeat" ) {
-		window.currentAction = action[1];
-	}
-}

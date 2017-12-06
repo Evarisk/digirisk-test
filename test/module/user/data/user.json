@@ -1,0 +1,19 @@
+{
+	"users": [
+		{
+			"firstname": "Jimmy",
+			"lastname": "Latour",
+			"email": "latour.jimmy@demo.com"
+		},
+		{
+			"firstname": "Jean",
+			"lastname": "Dupont",
+			"email": "jean.dupont@demo.com"
+		},
+		{
+			"firstname": "Robert",
+			"lastname": "test",
+			"email": "robert.test@demo.com"
+		}
+	]
+}

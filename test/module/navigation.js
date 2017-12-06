@@ -2,7 +2,7 @@ var expect = require('chai').expect;
 
 var gpID = 0;
 
-module.exports = function(nightmare, cb) {
+module.exports.navigation = function(nightmare, cb) {
 	describe('Navigation', function() {
 		it('Create new group', function(done) {
 			create_group(nightmare, done);
@@ -23,8 +23,8 @@ function create_group(nightmare, done) {
 		.click( '.unit.new.active .add' )
 		.wait( '.unit.active .title' )
 		.evaluate(function() {
-			var response = window.currentResponse;
-			delete window.currentResponse;
+			var response = window.currentResponse['createdSocietySuccess'];
+			delete window.currentResponse['createdSocietySuccess'];
 			var title = document.querySelector( '.unit.active .title .name' );
 
 			if ( 'Mon SUPER GP' === title.innerHTML ) {
@@ -37,12 +37,8 @@ function create_group(nightmare, done) {
 			expect(response.data.society_id).not.to.be.NaN;
 			expect(response.success).to.equal(true);
 			gpID = response.data.society_id;
-
-			done();
 		})
-		.catch((error) => {
-			console.error( 'Create GP:', error );
-		})
+		.then(done, done);
 }
 
 function create_workunit(nightmare, done) {
@@ -52,13 +48,13 @@ function create_workunit(nightmare, done) {
 		.type( '.unit.new.active input', 'Ma SUPER UT sous mon SUPER GP' )
 		.click( '.unit.new.active .add' )
 		.wait(function() {
-			if (window.currentResponse) {
+			if (window.currentResponse['createdSocietySuccess']) {
 				return true;
 			}
 		})
 		.evaluate(() => {
-			var response = window.currentResponse;
-			delete window.currentResponse;
+			var response = window.currentResponse['createdSocietySuccess'];
+			delete window.currentResponse['createdSocietySuccess'];
 			var title = document.querySelector( '.unit.active .title .name' );
 
 			if ( 'Ma SUPER UT sous mon SUPER GP' === title.innerHTML ) {
@@ -70,9 +66,35 @@ function create_workunit(nightmare, done) {
 		.then((response) => {
 			expect(response.data.society_id).not.to.be.NaN;
 			expect(response.success).to.equal(true);
-			done();
 		})
-		.catch((error) => {
-			console.error( 'Create UT:', error );
+		.then(done, done);
+}
+
+module.exports.openEstablishment = function(nightmare, done) {
+	nightmare
+		.click( '.navigation-container .workunit-list .title.action-attribute' )
+		.wait(function() {
+			if (window.currentResponse['loadedSocietySuccess']) {
+				return true;
+			}
 		})
+		.evaluate(() => {
+			var response = window.currentResponse['loadedSocietySuccess'];
+
+			var success = true;
+			var errors = [];
+
+			response.data.errors = errors;
+
+			if ( response.data.errors.length ) {
+				response.success = false;
+			}
+
+			return response;
+		})
+		.then((response) => {
+			expect(response.data.callback_success).to.equal('loadedSocietySuccess');
+			expect(response.success).to.equal(true);
+		})
+		.then(done, done);
 }
