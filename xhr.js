@@ -19,9 +19,18 @@ window.establishmentData = JSON.parse(window.establishmentData);
 
 window.riskData = fs.readFileSync("./test/module/establishment/data/risk.json");
 window.riskData = JSON.parse(window.riskData);
+window.allRiskSimpleResponse = []
 
 window.evaluatorData = fs.readFileSync("./test/module/establishment/data/evaluator.json");
 window.evaluatorData = JSON.parse(window.evaluatorData);
+
+window.riskPageData = fs.readFileSync("./test/module/risk-page/data/risk-page.json");
+window.riskPageData = JSON.parse(window.riskPageData);
+window.allRiskPageSimpleResponse = [];
+
+window.recommendationData = fs.readFileSync("./test/module/establishment/data/recommendation.json");
+window.recommendationData = JSON.parse(recommendationData);
+window.allRecommendationsResponse = [];
 
 window.userData = fs.readFileSync("./test/module/user/data/user.json");
 window.userData = JSON.parse(window.userData);
@@ -53,7 +62,9 @@ window.XMLHttpRequest.prototype.open = function (method, url, async, user, pass)
 
 				}
 
-				window.currentResponse[responseJSON.data.callback_success] = responseJSON;
+				if ( responseJSON && responseJSON.data && responseJSON.data.callback_success ) {
+					window.currentResponse[responseJSON.data.callback_success] = responseJSON;
+				}
 			}
 		}, false);
 	open.apply(this, arguments);

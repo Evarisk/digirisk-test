@@ -28,6 +28,10 @@ var exportGoToEvaluator = function (nightmare, done) {
 	goToEvaluator(nightmare, done);
 }
 
+var exportGoToRecommendation = function (nightmare, done) {
+	goToRecommendation(nightmare, done);
+}
+
 function goToInformations( nightmare, done ) {
 	nightmare
 		.click( '.main-container .tab-element[data-action="digi-informations"]' )
@@ -207,7 +211,7 @@ function goToRisk( nightmare, done ) {
 			delete window.currentResponse['loadedTabContent'];
 			var title = document.querySelector( '.main-content h1' );
 
-			if ( title.innerHTML.indexOf( 'Les risques' ) ) {
+			if ( -1 !== title.innerHTML.indexOf( 'Les risques' ) ) {
 				return response;
 			}
 
@@ -238,9 +242,42 @@ function goToEvaluator( nightmare, done ) {
 		.evaluate(function() {
 			var response = window.currentResponse['loadedTabContent'];
 			delete window.currentResponse['loadedTabContent'];
-			var title = document.querySelector( '.main-content h1' );
 
-			if ( title.innerHTML.indexOf( 'Les évaluateurs' ) ) {
+			var title = document.querySelector( '.main-content h1' );
+			if ( -1 !== title.innerHTML.indexOf( 'Les évaluateurs' ) ) {
+				return response;
+			}
+
+			return false;
+		})
+		.then(function(result) {
+			var response = {};
+
+			if ( ! result ) {
+				response.success = result;
+			} else {
+				response = result;
+			}
+
+			expect(response.success).to.equal(true);
+		})
+		.then(done, done);
+}
+
+function goToRecommendation( nightmare, done ) {
+	nightmare
+		.click( '.main-container .tab-element[data-action="digi-recommendation"]' )
+		.wait(function() {
+			if (window.currentResponse['loadedTabContent']) {
+				return true;
+			}
+		})
+		.evaluate(function() {
+			var response = window.currentResponse['loadedTabContent'];
+			delete window.currentResponse['loadedTabContent'];
+
+			var title = document.querySelector( '.main-content h1' );
+			if ( -1 !== title.innerHTML.indexOf( 'Les signalisations' ) ) {
 				return response;
 			}
 
@@ -267,3 +304,4 @@ module.exports.goToDiffusionInformations = exportGoTDiffusionInformations;
 module.exports.goToDUER                  = exportGoTDUER;
 module.exports.goToRisk                  = exportGoToRisk;
 module.exports.goToEvaluator             = exportGoToEvaluator;
+module.exports.goToRecommendation        = exportGoToRecommendation;

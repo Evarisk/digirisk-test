@@ -5,11 +5,13 @@ var riskData = fs.readFileSync("./test/module/establishment/data/risk.json");
 var riskData = JSON.parse(riskData);
 
 module.exports.createRiskSimpleCotation = function(nightmare, done) {
-	nightmare
+	for ( var key in riskData["createRiskSimpleCotation"] ) {
+		nightmare
+		.wait(2000)
 		.click( '.risk-row.edit .categorie-container' )
-		.click( '.risk-row.edit .content.active li[aria-label="' + riskData["createRiskSimpleCotation"]["categoryRiskAriaLabel"] + '"]' )
+		.click( '.risk-row.edit .content.active li[aria-label="' + riskData["createRiskSimpleCotation"][key]["categoryRiskAriaLabel"] + '"]' )
 		.click( '.risk-row.edit .cotation-container' )
-		.click( '.risk-row.edit .content.active li[data-level="' + riskData["createRiskSimpleCotation"]["cotationLevel"] + '"]' )
+		.click( '.risk-row.edit .content.active li[data-level="' + riskData["createRiskSimpleCotation"][key]["cotationLevel"] + '"]' )
 		.click( '.risk-row.edit .action .action-input' )
 		.wait(function() {
 			if (window.currentResponse['savedRiskSuccess']) {
@@ -23,12 +25,12 @@ module.exports.createRiskSimpleCotation = function(nightmare, done) {
 			var success = true;
 			var errors = [];
 
-			if ( ! document.body.contains( document.querySelector( '.risk-row[data-id="' + response.data.risk.id + '"] .cotation-container .action.level' + window.riskData["createRiskSimpleCotation"]["cotationLevel"] ) ) ) {
-				errors.push( 'risk.cotation level is not equal ' + window.riskData["createRiskSimpleCotation"]["cotationLevel"]  );
+			if ( ! document.body.contains( document.querySelector( '.risk-row[data-id="' + response.data.risk.id + '"] .cotation-container .action.level' + window.riskData["createRiskSimpleCotation"][window.allRiskSimpleResponse.length]["cotationLevel"] ) ) ) {
+				errors.push( 'risk.cotation level is not equal ' + window.riskData["createRiskSimpleCotation"][window.allRiskSimpleResponse.length]["cotationLevel"]  );
 			}
 
-			if ( ! document.body.contains( document.querySelector( '.risk-row[data-id="' + response.data.risk.id + '"] .categorie-container .action .tooltip[aria-label="' + window.riskData["createRiskSimpleCotation"]["categoryRiskAriaLabel"] + '"]' ) ) ) {
-				errors.push( 'risk.categoryRisk is not equal ' + window.riskData["createRiskSimpleCotation"]["categoryRiskAriaLabel"]  );
+			if ( ! document.body.contains( document.querySelector( '.risk-row[data-id="' + response.data.risk.id + '"] .categorie-container .action .tooltip[aria-label="' + window.riskData["createRiskSimpleCotation"][window.allRiskSimpleResponse.length]["categoryRiskAriaLabel"] + '"]' ) ) ) {
+				errors.push( 'risk.categoryRisk is not equal ' + window.riskData["createRiskSimpleCotation"][window.allRiskSimpleResponse.length]["categoryRiskAriaLabel"]  );
 			}
 
 			response.data.errors = errors;
@@ -37,13 +39,19 @@ module.exports.createRiskSimpleCotation = function(nightmare, done) {
 				response.success = false;
 			}
 
-			return response;
+			window.allRiskSimpleResponse.push( response );
+			return window.allRiskSimpleResponse;
 		})
-		.then((response) => {
-			expect(response.data.callback_success).to.equal('savedRiskSuccess');
-			expect(response.success).to.equal(true);
-		})
-		.then(done, done);
+	}
+
+	nightmare.then((response) => {
+		for ( var i = 0; i < response.length; i++ ) {
+			expect(response[i].data.callback_success).to.equal('savedRiskSuccess');
+			expect(response[i].success).to.equal(true);
+		}
+
+	})
+	.then(done, done);
 }
 
 module.exports.loadRiskSimple = function(nightmare, done) {
@@ -56,6 +64,8 @@ module.exports.loadRiskSimple = function(nightmare, done) {
 		})
 		.evaluate(() => {
 			var response = window.currentResponse['loadedRiskSuccess'];
+			Object.keys(window.currentResponse).forEach(function(key) { delete window.currentResponse[key]; });
+			window.currentResponse['loadedRiskSuccess'] = {};
 			delete window.currentResponse['loadedRiskSuccess'];
 
 			var success = true;
@@ -184,6 +194,8 @@ module.exports.loadRiskComplex = function(nightmare, done) {
 		})
 		.evaluate(() => {
 			var response = window.currentResponse['loadedRiskSuccess'];
+			Object.keys(window.currentResponse).forEach(function(key) { delete window.currentResponse[key]; });
+			window.currentResponse['loadedRiskSuccess'] = {};
 			delete window.currentResponse['loadedRiskSuccess'];
 
 			var success = true;
@@ -261,7 +273,7 @@ module.exports.editRiskComplex = function(nightmare, done) {
 
 module.exports.deleteRisk = function(nightmare, done) {
 	nightmare
-		.click( '.risk-row .action-delete' )
+		.click( '.risk-row.method-evarisk-simplified .action-delete' )
 		.wait(function() {
 			if (window.currentResponse['deletedRiskSuccess']) {
 				return true;

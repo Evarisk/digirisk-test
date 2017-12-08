@@ -256,6 +256,7 @@ function generate_diffusion_informations(nightmare, done) {
 
 function generate_DUER(nightmare, done) {
 	for( var key in duerDATA ) {
+		nightmare.wait(2000);
 		nightmare.click( '.main-content tfoot .open-popup[data-src="' + key  + '"]' );
 		nightmare.wait( '.main-content .popup.active .button.green[data-target="' + key +'"]' );
 		nightmare.type( '.main-content .popup.active textarea', '' );
@@ -264,11 +265,10 @@ function generate_DUER(nightmare, done) {
 	}
 
 	nightmare
-		.wait(10000)
+		.wait(5000)
 		.click( '.main-content .open-popup[data-cb-func="popup_for_generate_DUER"]' )
-		.wait('.popup.active.duer:not(.no-close)')
 		.wait(function() {
-			if (window.currentResponse['generatedDUERSuccess']) {
+			if (window.currentResponse['generatedDUERSuccess'] && window.currentResponse['generatedDUERSuccess'].data.end) {
 				return true;
 			}
 		})
@@ -279,10 +279,11 @@ function generate_DUER(nightmare, done) {
 			var success = true;
 			var errors = [];
 
-			if ( response.errors.length ) {
+			response.data.errors = errors;
+
+			if ( response.data.errors.length ) {
 				response.success = false;
 			}
-			response.data.errors = errors;
 
 			return response;
 		})

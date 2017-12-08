@@ -1,8 +1,18 @@
 {
-	"createRiskSimpleCotation": {
-		"categoryRiskAriaLabel": "Risques d'incendie, d'explosion",
-		"cotationLevel": 3
-	},
+	"createRiskSimpleCotation": [
+		{
+			"categoryRiskAriaLabel": "Risques d'incendie, d'explosion",
+			"cotationLevel": 3
+		},
+		{
+			"categoryRiskAriaLabel": "Risques liés aux circulations internes de véhicules",
+			"cotationLevel": 2
+		},
+		{
+			"categoryRiskAriaLabel": "Risques liés aux ambiances lumineuses",
+			"cotationLevel": 1
+		}
+	],
 	"editRiskSimpleCotation": {
 		"categoryRiskAriaLabel": "Risques d'incendie, d'explosion",
 		"cotationLevel": 4
